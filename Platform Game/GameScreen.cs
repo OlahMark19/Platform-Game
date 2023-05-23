@@ -24,6 +24,7 @@ namespace Platform_Game
 
         int horizontalSpeed = 3;
         int verticalSpeed = 2;
+        int platformBSpeed = 4;
 
         int enemy2Speed = 2;
         int enemy3Speed = 2;
@@ -137,7 +138,7 @@ namespace Platform_Game
                             {
                                 // Collision on the right side of player
                                 player.Left = x.Left;
-                         //       jumpSpeed = 0;
+                         //     jumpSpeed = 0;
                                 force += 1;
                                 player.Left = x.Left - player.Width;
                             }
@@ -158,9 +159,26 @@ namespace Platform_Game
                     {
                         if (player.Bounds.IntersectsWith(x.Bounds))
                         {
-                            gameTimer.Stop();
-                            isGameOver = true;
-                            textBox2.Text = "The enemies killed you!";
+                            // Collision detected
+                            int overlapLeft = x.Right - player.Left;
+                            int overlapRight = player.Right - x.Left;
+                            int overlapTop = x.Bottom - player.Top;
+                            int overlapBottom = player.Bottom - x.Top;
+
+                            if (overlapBottom < overlapLeft && overlapBottom < overlapRight && overlapBottom < overlapTop)
+                            {
+                                // Collision on the bottom side of player
+                            
+                                x.Visible = false;
+                                x.Parent = null;
+
+                            }
+                            else
+                            {
+                                gameTimer.Stop();
+                                isGameOver = true;
+                                textBox2.Text = "The enemies killed you!";
+                            }
                         }
                     }
 
@@ -171,6 +189,17 @@ namespace Platform_Game
                             gameTimer.Stop();
                             isGameOver = true;
                             textBox2.Text = "You drowned!";
+                        }
+                    }
+                    if ((string)x.Tag == "platformB")
+                    {
+                        if (player.Bounds.IntersectsWith(x.Bounds))
+                        {
+                            x.Top += platformBSpeed;
+
+                            force = 5;
+                            player.Top = x.Top - player.Height;
+                            midair = false;
                         }
                     }
                 }
